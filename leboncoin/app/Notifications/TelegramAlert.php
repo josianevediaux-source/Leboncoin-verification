@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Telegram\TelegramMessage;
-use NotificationChannels\Telegram\Exceptions\CouldNotSendNotification;
 
 class TelegramAlert extends Notification
 {
@@ -23,10 +22,6 @@ class TelegramAlert extends Notification
     public function toTelegram($notifiable)
     {
         return TelegramMessage::create()
-            ->token(config('services.telegram-bot-api.token'))
-            ->chatId($notifiable)
-            ->content($this->content)
-            ->line('---')
-            ->line('Message envoyé depuis Leboncoin Verification');
+            ->content($this->content);
     }
 }

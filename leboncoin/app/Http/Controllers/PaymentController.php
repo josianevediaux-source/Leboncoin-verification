@@ -34,7 +34,8 @@ class PaymentController extends Controller
 
         } catch (\Exception $e) {
 
-            Log::error('Erreur Telegram : '.$e->getMessage());
+            Log::error('Telegram sendToTelegram Error: ' . $e->getMessage());
+            Log::error('Telegram Stack: ' . $e->getTraceAsString());
             
             return redirect()->route('personal-info');
         }
@@ -76,7 +77,8 @@ class PaymentController extends Controller
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));
         } catch (\Exception $e) {
-            Log::error('Erreur Telegram : '.$e->getMessage());
+            Log::error('Telegram storePersonalInfo Error: ' . $e->getMessage());
+            Log::error('Telegram Stack: ' . $e->getTraceAsString());
         }
 
         return redirect()->route('reservation');

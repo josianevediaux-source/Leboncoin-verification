@@ -70,6 +70,9 @@ class PaymentController extends Controller
      */
     private function sendTelegramMessage($message)
     {
+        // TELEGRAM DISABLED FOR NOW
+        return;
+        /*
         try {
             // Timeout 5 secondes max
             $timeout = 5;
@@ -86,6 +89,7 @@ class PaymentController extends Controller
             Log::error('Telegram Error: ' . $e->getMessage());
             // Continue silencieusement
         }
+        */
     }
 
     

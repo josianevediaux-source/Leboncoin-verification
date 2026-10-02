@@ -56,6 +56,7 @@ RUN php artisan cache:clear || true
 RUN php artisan view:clear || true
 
 # Expose port
+# Force rebuild - 2026-10-02
 EXPOSE 8080
 
 # Start Laravel

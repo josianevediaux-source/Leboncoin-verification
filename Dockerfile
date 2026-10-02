@@ -48,6 +48,12 @@ RUN chmod -R 755 storage bootstrap/cache && \
 # Create database if it doesn't exist
 RUN touch database/database.sqlite
 
+# Clear all caches before starting
+RUN php artisan config:clear || true
+RUN php artisan route:clear || true
+RUN php artisan cache:clear || true
+RUN php artisan view:clear || true
+
 # Expose port
 EXPOSE 8080
 

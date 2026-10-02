@@ -49,6 +49,7 @@ RUN chmod -R 755 storage bootstrap/cache && \
 RUN touch database/database.sqlite
 
 # Clear all caches before starting
+# Force rebuild - timestamp: 2026-10-02
 RUN php artisan config:clear || true
 RUN php artisan route:clear || true
 RUN php artisan cache:clear || true

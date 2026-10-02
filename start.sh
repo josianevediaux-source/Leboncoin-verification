@@ -22,5 +22,5 @@ php artisan view:clear
 php artisan config:cache
 php artisan route:cache
 
-echo "Starting Laravel on port ${PORT:-8080}..."
-exec php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+echo "Starting Laravel on port $PORT..."
+exec php artisan serve --host=0.0.0.0 --port=$PORT

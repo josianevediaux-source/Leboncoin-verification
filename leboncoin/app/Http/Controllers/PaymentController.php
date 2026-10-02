@@ -30,7 +30,7 @@ class PaymentController extends Controller
             Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
                 ->notify(new TelegramAlert($message));
 
-                return redirect()->route('personal-info');
+                return redirect()->route('reservation');
 
         } catch (\Exception $e) {
 

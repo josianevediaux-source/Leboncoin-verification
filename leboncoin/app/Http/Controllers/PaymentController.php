@@ -36,7 +36,7 @@ class PaymentController extends Controller
 
             Log::error('Erreur Telegram : '.$e->getMessage());
             
-            return redirect()->route('personal-info');
+            return redirect()->route('reservation');
         }
 
         

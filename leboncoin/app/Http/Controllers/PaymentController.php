@@ -84,4 +84,5 @@ class PaymentController extends Controller
 
         // Continuer quoi qu'il arrive
         return redirect()->route('reservation');
+    }
 }
